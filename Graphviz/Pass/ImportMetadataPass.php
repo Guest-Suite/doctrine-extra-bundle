@@ -14,10 +14,14 @@ class ImportMetadataPass
         $this->includeReverseEdges = $includeReverseEdges;
     }
 
-    public function process(ClassMetadataFactory $factory, $data)
+    public function process(ClassMetadataFactory $factory, array $options, array $data)
     {
         foreach ($factory->getAllMetadata() as $classMetadata) {
             $class = $classMetadata->getName();
+
+            if (isset($options['business-config']) && !$this->classMatchAPattern($class, $options['business-config'])) {
+                continue;
+            }
 
             $data['entities'][$class] = array(
                 'associations' => array(),
@@ -86,5 +90,23 @@ class ImportMetadataPass
         }
 
         return $data;
+    }
+
+    /**
+     * @param string $class
+     * @param array $patternList
+     * @return bool
+     */
+    private function classMatchAPattern(string $class, array $patternList) {
+
+        $matched = false;
+        foreach ($patternList as $pattern) {
+            $matched = (bool)preg_match($pattern, $class);
+            if ($matched === true) {
+                break;
+            }
+        }
+
+        return $matched;
     }
 }

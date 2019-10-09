@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping\ClassMetadataInfo;
 
 class InheritancePass
 {
-    public function process(ClassMetadataFactory $factory, $data)
+    public function process(ClassMetadataFactory $factory, array $options, array $data)
     {
         foreach ($factory->getAllMetadata() as $classMetadata) {
             $actual = $classMetadata->getName();

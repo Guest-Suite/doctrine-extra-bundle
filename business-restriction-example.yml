@@ -1,0 +1,4 @@
+- /^AppBundle\\Entity\\SubFolder\\.+/
+- /^OtherBundle\\Entity\\.*/
+- /^YetOtherBundle\\Entity\\SpecificEntity/
+- /^.*AnyTerm.*/

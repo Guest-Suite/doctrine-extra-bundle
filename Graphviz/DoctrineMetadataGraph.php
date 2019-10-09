@@ -18,14 +18,22 @@ class DoctrineMetadataGraph extends Digraph
     {
         parent::__construct('G');
 
-        $this->attr('node', array(
-            'shape' => 'record'
-        ));
+        $nodeConfig = ['shape' => 'record'];
+
+        if ($options['font']) {
+            $this->attr('graph', [
+                'fontname' => $options['font']
+            ]);
+
+            $nodeConfig['font'] = $options['font'];
+        }
+
+        $this->attr('node', $nodeConfig);
         $this->set('rankdir', 'LR');
 
         $data = $this->createData($manager, $options);
 
-        $clusters = array();
+        $clusters = [];
 
         foreach ($data['entities'] as $class => $entity) {
             list($cluster, $label) = $this->splitClass($class);
@@ -42,7 +50,7 @@ class DoctrineMetadataGraph extends Digraph
                     ))
                 ;
             }
-
+;
             $label = $this->getEntityLabel($label, $entity);
             $clusters[$cluster]->node($class, array(
                 'label' => '"'.$label.'"',
@@ -51,14 +59,37 @@ class DoctrineMetadataGraph extends Digraph
         }
 
         foreach ($data['relations'] as $association) {
+            if (true === $options['useRandomEdgeColor'] ?? false) {
+                $color = $this->randomColor();
+            } else {
+                $color = '88888888';
+            }
+
             $attr = array();
             switch ($association['type']) {
                 case 'one_to_one':
+                    $attr['color'] = '#'.$color;
+                    $attr['dir'] = 'both';
+                    $attr['arrowtail'] = 'dot';
+                    $attr['arrowhead'] = 'dot';
+                    break;
                 case 'one_to_many':
+                    $attr['color'] = '#'.$color;
+                    $attr['dir'] = 'both';
+                    $attr['arrowtail'] = 'dot';
+                    $attr['arrowhead'] = 'crow';
+                    break;
                 case 'many_to_one':
+                    $attr['color'] = '#'.$color;
+                    $attr['dir'] = 'both';
+                    $attr['arrowtail'] = 'crow';
+                    $attr['arrowhead'] = 'dot';
+                    break;
                 case 'many_to_many':
-                    $attr['color'] = '#88888888';
-                    $attr['arrowhead'] = 'none';
+                    $attr['color'] = '#'.$color;
+                    $attr['dir'] = 'both';
+                    $attr['arrowtail'] = 'crow';
+                    $attr['arrowhead'] = 'crow';
                     break;
                 case 'extends':
             }
@@ -67,16 +98,24 @@ class DoctrineMetadataGraph extends Digraph
         }
     }
 
+    private function randomColorPart() {
+        return str_pad(dechex(mt_rand(0, 255)), 2, '0', STR_PAD_LEFT);
+    }
+
+    private function randomColor() {
+        return $this->randomColorPart().$this->randomColorPart().$this->randomColorPart().'FF';
+    }
+
     private function createData(ObjectManager $manager, array $options)
     {
         $data = array('entities' => array(), 'relations' => array());
         $passes = array(
-            new ImportMetadataPass($options['includeReverseEdges']),
+            new ImportMetadataPass($options['includeReverseEdges'] ?? true),
             new InheritancePass(),
         );
 
         foreach ($passes as $pass) {
-            $data = $pass->process($manager->getMetadataFactory(), $data);
+            $data = $pass->process($manager->getMetadataFactory(), $options, $data);
         }
 
         return $data;
