@@ -50,9 +50,13 @@ class AppKernel extends Kernel
 php app/console doctrine:mapping:graphviz
 ```
 
-If you want to create a PDF file out of it, with Linux:
+or
 
-.. code-block:: bash
+```bash
+php app/console doctrine:mapping:graphviz --use-random-edge-color --business-split-file=business-restriction-example.yml --font=Arial
+```
+
+If you want to create a PDF file out of it, with Linux:
 
 ```
 php app/console doctrine:mapping:graphviz | dot -Tpdf -oout.pdf
@@ -69,3 +73,6 @@ A set of sample entities are available to test internally the schema generations
 ./Resources/bin/graph Simple | dot -Tpdf -oout.pdf
 xdg-open out.pdf
 ```
+
+## Tests
+Use phpunit 5

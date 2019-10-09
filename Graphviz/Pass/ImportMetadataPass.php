@@ -7,10 +7,21 @@ use Doctrine\ORM\Mapping\ClassMetadataInfo;
 
 class ImportMetadataPass
 {
-    public function process(ClassMetadataFactory $factory, $data)
+    private $includeReverseEdges;
+
+    public function __construct($includeReverseEdges = true)
+    {
+        $this->includeReverseEdges = $includeReverseEdges;
+    }
+
+    public function process(ClassMetadataFactory $factory, array $options, array $data)
     {
         foreach ($factory->getAllMetadata() as $classMetadata) {
             $class = $classMetadata->getName();
+
+            if (isset($options['business-config']) && !$this->classMatchAPattern($class, $options['business-config'])) {
+                continue;
+            }
 
             $data['entities'][$class] = array(
                 'associations' => array(),
@@ -25,6 +36,12 @@ class ImportMetadataPass
             foreach ($classMetadata->getAssociationMappings() as $name => $mapping) {
                 $field = $mapping['fieldName'];
                 $targetEntity = $mapping['targetEntity'];
+
+                // skip reverse relationships if we are asked to.
+                // reverse relationships are recognized by their 'mappedBy' property.
+                if (!$this->includeReverseEdges && !empty($mapping['mappedBy'])) {
+                    continue;
+                }
 
                 $type = '';
                 switch ($mapping['type']) {
@@ -73,5 +90,23 @@ class ImportMetadataPass
         }
 
         return $data;
+    }
+
+    /**
+     * @param string $class
+     * @param array $patternList
+     * @return bool
+     */
+    private function classMatchAPattern(string $class, array $patternList) {
+
+        $matched = false;
+        foreach ($patternList as $pattern) {
+            $matched = (bool)preg_match($pattern, $class);
+            if ($matched === true) {
+                break;
+            }
+        }
+
+        return $matched;
     }
 }

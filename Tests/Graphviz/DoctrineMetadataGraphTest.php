@@ -14,7 +14,7 @@ class DoctrineMetadataGraphTest extends \PHPUnit_Framework_TestCase
     {
         $em = Sample::getEntityManager('Simple');
 
-        $graph = new DoctrineMetadataGraph($em);
+        $graph = new DoctrineMetadataGraph($em, []);
 
         $simpleId = 'cluster_Alex_DoctrineExtraBundle_Tests_Fixtures_Simple';
         $userId = 'Alex\\DoctrineExtraBundle\\Tests\\Fixtures\\Simple\\User';
@@ -44,7 +44,7 @@ class DoctrineMetadataGraphTest extends \PHPUnit_Framework_TestCase
     public function testInheritance()
     {
         $em = Sample::getEntityManager('Inheritance');
-        $graph = new DoctrineMetadataGraph($em);
+        $graph = new DoctrineMetadataGraph($em, []);
 
         $inheritanceId = 'cluster_Alex_DoctrineExtraBundle_Tests_Fixtures_Inheritance';
 
