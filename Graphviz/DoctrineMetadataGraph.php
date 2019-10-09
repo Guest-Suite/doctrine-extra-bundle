@@ -48,7 +48,7 @@ class DoctrineMetadataGraph extends Digraph
                     ))
                 ;
             }
-
+;
             $label = $this->getEntityLabel($label, $entity);
             $clusters[$cluster]->node($class, array(
                 'label' => '<'.$label.'>',
