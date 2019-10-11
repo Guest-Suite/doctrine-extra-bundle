@@ -41,19 +41,17 @@ class DoctrineMetadataGraph extends Digraph
                 $escaped = str_replace("\\", "_", $cluster);
                 $clusters[$cluster] = $this->subgraph('cluster_'.$escaped)
                     ->set('label', $cluster)
-                    ->set('style', 'filled')
+                    ->set('style', 'solid')
                     ->set('color', '#eeeeee')
                     ->attr('node', array(
-                        'style' => 'filled',
-                        'color' => '#eecc88',
-                        'fillcolor' => '#FCF0AD',
+                        'shape' => 'none',
                     ))
                 ;
             }
 ;
             $label = $this->getEntityLabel($label, $entity);
             $clusters[$cluster]->node($class, array(
-                'label' => '"'.$label.'"',
+                'label' => '<'.$label.'>',
                 '_escaped' => false
             ));
         }
@@ -125,20 +123,20 @@ class DoctrineMetadataGraph extends Digraph
     {
         // Beware that this value will not be escaped, so every special character must be escaped
 
-        $result = '{{<__class__> '.$class.'|';
+        $result = '<table border="1" cellborder="0" cellspacing="0" cellpadding="0"><tr><td port="'.$class.'"><table border="0" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#b0c4de"><tr><td><b>'.$class.'</b></td></tr></table></td></tr>';
 
         foreach ($entity['associations'] as $name => $val) {
             list($ignored, $val) = $this->splitClass($val);
             $escVal = str_replace("\\", "\\\\", $val);
-            $result .= '<'.$name.'> '.$name.' : '.$escVal." \\l|";
+            $result .= '<tr><td port="'.$name.'">'.$name.' : '.$escVal." </td></tr>";
         }
 
         foreach ($entity['fields'] as $name => $val) {
             $escVal = str_replace("\\", "\\\\", $val);
-            $result .= $name.' : '.$escVal." \\l";
+            $result .= '<tr><td>'.$name.' : '.$escVal.'</td></tr>';
         }
 
-        $result .= '}}';
+        $result .= '</table>';
 
         return $result;
     }
