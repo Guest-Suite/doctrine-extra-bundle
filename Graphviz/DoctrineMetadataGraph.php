@@ -41,8 +41,6 @@ class DoctrineMetadataGraph extends Digraph
                 $escaped = str_replace("\\", "_", $cluster);
                 $clusters[$cluster] = $this->subgraph('cluster_'.$escaped)
                     ->set('label', $cluster)
-                    ->set('style', 'solid')
-                    ->set('color', '#eeeeee')
                     ->attr('node', array(
                         'shape' => 'none',
                     ))
@@ -123,17 +121,19 @@ class DoctrineMetadataGraph extends Digraph
     {
         // Beware that this value will not be escaped, so every special character must be escaped
 
-        $result = '<table border="1" cellborder="0" cellspacing="0" cellpadding="0"><tr><td port="'.$class.'"><table border="0" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#b0c4de"><tr><td><b>'.$class.'</b></td></tr></table></td></tr>';
+        $result = '<table border="1" cellborder="0" cellspacing="0" cellpadding="2"><tr><td port="'.$class.'"><table border="0" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#b0c4de"><tr><td><b>'.$class.'</b></td></tr></table></td></tr>';
 
         foreach ($entity['associations'] as $name => $val) {
             list($ignored, $val) = $this->splitClass($val);
             $escVal = str_replace("\\", "\\\\", $val);
-            $result .= '<tr><td port="'.$name.'">'.$name.' : '.$escVal." </td></tr>";
+            $result .= '<tr><td align="left" port="'.$name.'">'.$name.' : '.$escVal." </td></tr>";
         }
 
+        $result .= '<HR/>';
+        
         foreach ($entity['fields'] as $name => $val) {
             $escVal = str_replace("\\", "\\\\", $val);
-            $result .= '<tr><td>'.$name.' : '.$escVal.'</td></tr>';
+            $result .= '<tr><td align="left">'.$name.' : '.$escVal.'</td></tr>';
         }
 
         $result .= '</table>';
