@@ -1,7 +1,18 @@
 {
-    "name": "alexandresalome/doctrine-extra-bundle",
+    "name": "guest-suite/doctrine-schema-exporter",
     "description": "Extra features for Doctrine, as a Symfony bundle",
     "license": "MIT",
+    "authors": [
+        {
+            "name": "Alexandre Salomé",
+            "homepage": "https://alexandre.salome.fr",
+            "role": "Original project developer"
+        },
+        {
+            "name": "Arnaud Goulpeau",
+            "email": "arnaud.goulpeau@guest-suite.com"
+        }
+    ],
 
     "autoload": {
         "psr-0": {
